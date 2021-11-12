@@ -61,7 +61,7 @@ services:
       KONG_ADMIN_ERROR_LOG:  /dev/stderr
       KONG_PROXY_LISTEN:     0.0.0.0:8000, 0.0.0.0:8443 ssl
       KONG_ADMIN_LISTEN:     0.0.0.0:8001, 0.0.0.0:8444 ssl
-      KONG_PLUGINS:          oidc
+      KONG_PLUGINS:          oidc,oidc-consumer
 
   konga-prepare:
     image: pantsel/konga
