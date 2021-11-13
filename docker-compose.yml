@@ -19,6 +19,11 @@ services:
       POSTGRES_DB:       kong_db
       POSTGRES_USER:     kong
       POSTGRES_PASSWORD: kong
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   kong-migrate:
     image: kong-oidc:local
@@ -31,7 +36,8 @@ services:
       - KONG_PG_USER=kong
       - KONG_PG_PASSWORD=kong
     depends_on:
-      - db
+      - db:
+        condition: service_healthy
     networks:
       - kong-net
   kong:
@@ -72,14 +78,13 @@ services:
     links:
       - db
     depends_on:
-      - db
+      - db:
+        condition: service_healthy
 
   konga:
     image: pantsel/konga
     ports:
       - 1337:1337
-    links:
-      - kong:kong
     container_name: konga
     environment:
       - DB_ADAPTER=postgres
@@ -99,7 +104,8 @@ services:
     networks:
       - kong-net
     depends_on:
-      - db
+      - db:
+        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
